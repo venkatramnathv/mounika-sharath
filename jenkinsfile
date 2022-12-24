@@ -1,0 +1,38 @@
+pipeline {
+   agent any
+   
+   stages{
+      stage('Checkout') {
+         steps {
+            Checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/venkatramnathv/springboot-app.git' ]]])
+         } 
+      }
+
+      stage("Build image") {
+         steps {
+            script {
+               docker.build 
+            }
+         }
+   
+      }
+
+      stage("docker push") {
+         steps{
+            script{
+               
+                
+            }
+         }
+      }
+
+      stage ("Kube Deploy") {
+            steps {
+                withKubeConfig(clusterName: '', contextName: '', credentialsId: 'K8S', namespace: '', serverUrl: '') {
+                 sh "kubectl apply -f eks-deploy-from-ecr.yaml"
+                }
+            }
+        }
+   }
+   
+}
